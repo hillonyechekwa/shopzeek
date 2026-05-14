@@ -23,7 +23,7 @@ export function ProductCard({ product }: Props) {
     : 0;
 
   return (
-    <Link href={`/shop/${product.slug}`} className="group block">
+    <Link href={`/shop/${product.slug}`} className="group block bg-white hover:bg-[#FFDFD2]">
       {/* Image Container */}
       <div className={`${imageBgColor} rounded-2xl relative h-64 w-full mb-4 overflow-hidden transition-colors duration-300`}>
         {isOnDeal && percentOff > 0 && (

@@ -64,7 +64,7 @@ export function ProductCarousel({
           </div>
         ) : (
           <Carousel
-            // Changed from "start" to "center" to tell the carousel logic to center things
+            
             opts={{ align: "center", dragFree: true }}
             className="w-full relative"
           >
