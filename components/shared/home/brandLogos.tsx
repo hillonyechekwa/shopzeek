@@ -1,27 +1,34 @@
-
+import Image from "next/image";
 
 const brands = [
-  "THE COSMETIC REPUBLIC",
-  "ORS",
-  "THE COSMETIC REPUBLIC",
-  "ORS",
-  "THE COSMETIC REPUBLIC",
-  "ORS",
+  { name: "The Cosmetic Republic", logo: "/cosmetic_img.png" },
+  { name: "ORS", logo: "/ors_img.jpg" },
+  { name: "The Cosmetic Republic 2", logo: "/cosmetic_img.png" },
+  { name: "ORS 2", logo: "/ors_img.jpg" },
+  { name: "The Cosmetic Republic 3", logo: "/cosmetic_img.png" },
+  { name: "ORS 3", logo: "/ors_img.jpg" },
 ];
 
 export function BrandLogos() {
   return (
-    <div className="border-y border-gray-100 py-4">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between gap-4 overflow-x-auto">
-        {brands.map((brand, i) => (
-          <span
-            key={i}
-            className="text-xs font-bold text-gray-400 shrink-0 tracking-wider"
-          >
-            {brand}
-          </span>
-        ))}
+    <section className="py-12 border-y border-gray-100 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60">
+          {brands.map((brand, index) => (
+            <div 
+              key={index} 
+              className="relative h-12 w-32 md:w-40 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer"
+            >
+              <Image
+                src={brand.logo}
+                alt={brand.name}
+                fill
+                className="object-contain"
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
