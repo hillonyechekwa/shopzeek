@@ -8,21 +8,21 @@ const categories = [
     desc: "Experience the ultimate skincare transformation with our quality skincare products.",
     href: "/shop?category=Skin+Care",
     bg: "bg-[#F4F6F8]",
-    image: "https://placehold.co/400x500/transparent/gray?text=Skin+Care",
+    image: "/skin_img.png",
   },
   {
     title: "Enhance Your\nBeauty",
     desc: "Experience the ultimate skincare transformation with our quality skincare products.",
     href: "/shop?category=Hair+Care",
     bg: "bg-[#FFF0E6]",
-    image: "https://placehold.co/400x500/transparent/gray?text=Cosmetics",
+    image: "/beauty_img.png",
   },
   {
     title: "Get Great\nFragrances",
     desc: "Experience the ultimate skincare transformation with our quality skincare products.",
     href: "/shop?category=Fragrances",
     bg: "bg-[#FDECEE]",
-    image: "https://placehold.co/400x500/transparent/gray?text=Fragrance",
+    image: "/fragrance_img.jpg",
   },
 ];
 
