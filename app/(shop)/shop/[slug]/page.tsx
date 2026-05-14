@@ -9,9 +9,10 @@ import {ProductCarousel} from "@/components/shared/home/ProductCarousel"
 
 
 
-export default async function ProductDetailPage({params}: {params: {slug: string}}){
-    const cookieStore = await cookie()
+export default async function ProductDetailPage(props: {params: Promise<{slug: string}>}){
+    const cookieStore = await cookies()
     const supabaseClient = createClient(cookieStore)
+    const params = await props.params
 
 
     const {data: product} = await supabaseClient

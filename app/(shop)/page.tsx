@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server"
 import { HeroBanner } from "@/components/shared/home/heroBanner"
 import { BrandLogos } from "@/components/shared/home/brandLogos"
 import { CategoryCards } from "@/components/shared/home/categoryCards"
-import { ProductsCarousel } from "@/components/shared/home/ProductsCarousel"
+import { ProductCarousel } from "@/components/shared/home/ProductCarousel"
 import { PromoBanner } from "@/components/shared/home/promoBanner"
 import { NewsletterBanner } from "@/components/shared/home/newsletterBanner"
 
@@ -44,17 +44,17 @@ export default async function HomePage() {
             <HeroBanner />
             <BrandLogos />
             <CategoryCards />
-            <ProductsCarousel
+            <ProductCarousel
                 title="Best Deals"
                 products={deals ?? []}
                 showCountdown
             />
-            <ProductsCarousel
+            <ProductCarousel
                 title="Featured Products"
                 products={featured ?? []}
             />
             <PromoBanner />
-            <ProductsCarousel
+            <ProductCarousel
                 title="New In Store"
                 products={newIn ?? []}
                 layout="grid"

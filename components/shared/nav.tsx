@@ -3,7 +3,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import logo from "./zeek1.svg"
+// import logo from "./zeek1.svg"
 import { useState } from "react"
 import { Search, User, ShoppingCart, Heart, Menu } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -33,7 +33,8 @@ export function Nav() {
                 {/* <Link href="/" className="text-2xl font-bold text-orange-500 shrink-0">
                     Zeek.
                 </Link> */}
-                <Image src={logo} alt="Zeek Logo" className="h-8 w-auto" />
+                {/* <Image src="/zeek1.svg" alt="Zeek Logo" className="h-8 w-auto" /> */}
+                <Image src="/zeek2.svg" alt="Zeek Logo" width={50} height={20} className="object-cover" />
 
                 {/* Search */}
                 <div className="relative flex-1 max-w-xl hidden sm:block">

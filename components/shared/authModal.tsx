@@ -5,12 +5,17 @@ import { useEffect } from "react"
 import { useAuthModal } from "@/store/auth-modal.store"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useActionState } from "react"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { signUp, signIn } from "@/app/actions/auth.actions"
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog";
 // import {signInWithEmail, signUpWithEmail} from "@/app/actions/auth.actions"
 
 
@@ -32,7 +37,13 @@ export function AuthModal() {
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden py-8 px-5 flex flex-col items-center justify-between">
+
+                <DialogTitle className="sr-only">Authentication</DialogTitle>
+                <DialogDescription className="sr-only">
+                    Sign in or create an account to continue.
+                </DialogDescription>
+
                 <Tabs defaultValue={defaultTab} className="w-full">
                     <TabsList className="w-full rounded-none border-b h-12 bg-white">
                         <TabsTrigger
