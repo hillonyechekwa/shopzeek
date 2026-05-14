@@ -1,28 +1,38 @@
-
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+// components/storefront/home/HeroBanner.tsx
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 export function HeroBanner() {
   return (
-    <div>
-      <div className="bg-orange-100 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-20 flex items-center">
-          <div className="max-w-lg z-10">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-              Discover Your Beauty
-            </h1>
-            <p className="text-gray-600 mt-3 mb-6">
-              Shop the Best Beauty products Online.
-            </p>
-            <Button
-              asChild
-              className="bg-orange-500 hover:bg-orange-600 rounded-full px-8"
-            >
-              <Link href="/shop">SHOP NOW</Link>
-            </Button>
-          </div>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="bg-gradient-to-r from-[#FFB89E] to-[#FF8C66] rounded-3xl relative overflow-hidden flex flex-col md:flex-row items-center min-h-[450px]">
+        {/* Left: Image */}
+        <div className="w-full md:w-1/2 h-64 md:h-full relative flex-shrink-0">
+          <Image 
+            src="https://placehold.co/800x800/transparent/white?text=Models" 
+            alt="Discover Your Beauty" 
+            fill
+            className="object-cover object-center"
+          />
+        </div>
+        
+        {/* Right: Text */}
+        <div className="w-full md:w-1/2 p-10 md:p-16 z-10 flex flex-col justify-center items-start">
+          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-4 drop-shadow-md">
+            Discover<br/>Your Beauty
+          </h1>
+          <p className="text-white text-lg mb-8 font-medium">
+            Shop the Best Beauty products Online.
+          </p>
+          <Button
+            asChild
+            className="bg-[#FF5A00] hover:bg-orange-600 text-white rounded-md px-10 py-6 text-lg font-bold shadow-lg"
+          >
+            <Link href="/shop">SHOP NOW</Link>
+          </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,4 +1,3 @@
-// components/storefront/home/CountdownTimer.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,11 +11,12 @@ export function CountdownTimer({ endsAt }: Props) {
     const calc = () => {
       const diff = new Date(endsAt).getTime() - Date.now();
       if (diff <= 0) { setTimeLeft("Expired"); return; }
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / 1000 / 60) % 60);
+      const s = Math.floor((diff / 1000) % 60);
       setTimeLeft(
-        `${String(h).padStart(2, "0")}h : ${String(m).padStart(2, "0")}m : ${String(s).padStart(2, "0")}s`
+        `${d}d : ${String(h).padStart(2, "0")}h : ${String(m).padStart(2, "0")}m : ${String(s).padStart(2, "0")}s`
       );
     };
     calc();
@@ -25,7 +25,7 @@ export function CountdownTimer({ endsAt }: Props) {
   }, [endsAt]);
 
   return (
-    <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded font-mono">
+    <span className="text-xs bg-[#FF5A00] text-white px-3 py-1.5 rounded font-medium tracking-wider">
       {timeLeft}
     </span>
   );

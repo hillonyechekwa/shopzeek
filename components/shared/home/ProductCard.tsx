@@ -14,14 +14,23 @@ export function ProductCard({ product }: Props) {
     product.deal_ends_at &&
     new Date(product.deal_ends_at) > new Date();
 
-  // The design uses a peach background for highlighted/deal items and a gray one for normal items
   const imageBgColor = isOnDeal ? "bg-[#FFEBE3]" : "bg-[#F3F4F6]";
   const activePrice = product.deal_price ?? product.price;
+  
+  // Calculate percentage off
+  const percentOff = isOnDeal 
+    ? Math.round(((product.price - product.deal_price!) / product.price) * 100) 
+    : 0;
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
       {/* Image Container */}
       <div className={`${imageBgColor} rounded-2xl relative h-64 w-full mb-4 overflow-hidden transition-colors duration-300`}>
+        {isOnDeal && percentOff > 0 && (
+          <div className="absolute top-3 right-3 bg-[#E53935] text-white text-[10px] font-bold px-2 py-1 rounded z-10">
+            {percentOff}% OFF
+          </div>
+        )}
         <Image
           src={product.image_urls[0] ?? "/placeholder.png"}
           alt={product.name}
@@ -58,7 +67,6 @@ export function ProductCard({ product }: Props) {
           ))}
         </div>
 
-        {/* Dummy Purchases count to match design */}
         <p className="text-xs text-gray-500 pt-2 font-medium">
           1,286 Purchases
         </p>
