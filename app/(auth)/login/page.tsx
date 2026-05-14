@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-  const [state, action, pending] = useActionState(signIn, undefined);
+  const [state, action, pending] = useActionState(signIn, { error: "" });
 
   return (
     <div className="flex min-h-screen items-center justify-center">

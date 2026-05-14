@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
-export async function signUp(formData: FormData): Promise<{ error?: string |undefined }> {
+export async function signUp(prevState: { error?: string } | undefined,formData: FormData): Promise<{ error?: string |undefined }> {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -23,7 +23,7 @@ export async function signUp(formData: FormData): Promise<{ error?: string |unde
   redirect("/");
 }
 
-export async function signIn(formData: FormData): Promise<{ error?: string | undefined }> {
+export async function signIn(prevState: { error?: string } | undefined, formData: FormData) {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
