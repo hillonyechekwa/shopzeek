@@ -3,7 +3,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import type { ActionResponse, Address, InsertAddress } from "@/types/database";
 
 export async function getUserAddresses(): Promise<ActionResponse<Address[]>> {
