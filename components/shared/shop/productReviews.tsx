@@ -53,7 +53,7 @@ export function ProductReviews({ reviews, avgRating, totalReviews, productId }: 
                   </div>
                 </div>
                 <span className="text-sm text-gray-900 font-medium">
-                  {new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', day: 'do', year: 'numeric' })}
+                 {new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </span>
               </div>
               <p className="text-gray-500 leading-relaxed">{review.comment}</p>
