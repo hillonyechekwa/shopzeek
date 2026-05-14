@@ -1,44 +1,21 @@
-"use client"
+"use client";
 
+import Image from "next/image";
 
-import { useState } from 'react'
-import Image from "next/image"
+export function ProductGallery({ images, name }: { images: string[] | null, name: string }) {
+  const mainImage = images && images.length > 0 ? images[0] : "/placeholder.png";
 
-
-interface Props{
-    images: string[]
-    name: string
-}
-
-export function ProductGallery({images, name}: Props) {
-    const [active, setActive] = useState(0)
-
-
-    return(
-         <div className="space-y-3">
-      <div className="relative h-96 bg-gray-50 rounded-2xl overflow-hidden">
+  return (
+    <div className="bg-[#F9F9F9] rounded-3xl p-8 flex justify-center items-center h-[500px] md:h-[650px] w-full">
+      <div className="relative w-full h-full max-w-[400px]">
         <Image
-          src={images[active] ?? "/placeholder.png"}
+          src={mainImage}
           alt={name}
           fill
-          className="object-contain p-6"
+          className="object-contain mix-blend-multiply"
+          priority
         />
       </div>
-      {images.length > 1 && (
-        <div className="flex gap-2">
-          {images.map((img, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`relative h-16 w-16 rounded-lg overflow-hidden border-2 transition-colors ${
-                active === i ? "border-orange-500" : "border-transparent"
-              }`}
-            >
-              <Image src={img} alt={`${name} ${i + 1}`} fill className="object-contain p-1" />
-            </button>
-          ))}
-        </div>
-      )}
     </div>
-    )
+  );
 }

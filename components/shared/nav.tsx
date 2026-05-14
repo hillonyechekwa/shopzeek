@@ -34,8 +34,9 @@ export function Nav() {
                     Zeek.
                 </Link> */}
                 {/* <Image src="/zeek1.svg" alt="Zeek Logo" className="h-8 w-auto" /> */}
-                <Image src="/zeek2.svg" alt="Zeek Logo" width={50} height={20} className="object-cover" />
-
+                <Link href="/">
+                    <Image src="/zeek2.svg" alt="Zeek Logo" width={50} height={20} className="object-cover" />
+                </Link>
                 {/* Search */}
                 <div className="relative flex-1 max-w-xl hidden sm:block">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
