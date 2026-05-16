@@ -3,72 +3,135 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
-import { Search, User, Heart, Menu } from "lucide-react"
+import { Search, User, Heart, Menu, LayoutDashboard, LogOut, ShoppingBag } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { CartNavIcon } from "@/components/shared/shop/navCartIcon"
 import { useAuthModal } from "@/store/auth-modal.store"
 import { useCartStore } from "@/store/cart.store"
-import {useWishlistStore} from "@/store/wishlist.store"
+import { useWishlistStore } from "@/store/wishlist.store"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useRouter } from "next/navigation"
+import { createClient } from "@/utils/supabase/client"
+import { signOut } from "@/app/actions/auth.actions"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 const navLinks = [
     { href: "/", label: "Home" },
     { href: "/shop", label: "Shop" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "Contact" },
-];
+]
 
 export function Nav() {
     const [mobileOpen, setMobileOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
+    const [user, setUser] = useState<SupabaseUser | null>(null)
+    const [profile, setProfile] = useState<{ full_name: string | null; role: string } | null>(null)
+
     const openAuthModal = useAuthModal((s) => s.open)
-    const syncWithDB = useCartStore((s) => s.syncWithDB);
+    const syncCartWithDB = useCartStore((s) => s.syncWithDB)
     const syncWishlistWithDB = useWishlistStore((s) => s.syncWithDB)
 
-    const router = useRouter();
-    const supabase = createClient();
+    const router = useRouter()
+
+    // Single supabase client instance for the whole component
+    const supabase = createClient()
 
     useEffect(() => {
-        syncWithDB(); 
-        syncWishlistWithDB()
-  }, [syncWithDB, syncWishlistWithDB]);
+        const fetchProfile = async (userId: string) => {
+            const { data } = await supabase
+                .from("profiles")
+                .select("full_name, role")
+                .eq("id", userId)
+                .single()
+            setProfile(data)
+        }
+
+        // Get current session on mount
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null)
+            if (session?.user) fetchProfile(session.user.id)
+        })
+
+        // Listen for auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (event, session) => {
+                setUser(session?.user ?? null)
+                if (session?.user) {
+                    fetchProfile(session.user.id)
+                    syncCartWithDB()
+                    syncWishlistWithDB()
+                } else {
+                    setProfile(null)
+                }
+            }
+        )
+
+        return () => subscription.unsubscribe()
+    }, [syncCartWithDB, syncWishlistWithDB])
 
     const handleWishlistClick = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession()
         if (!session) {
-            openAuthModal("signin");
+            openAuthModal("signin")
         } else {
-            router.push("/wishlist");
+            router.push("/wishlist")
         }
-    };
+    }
 
     const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && searchQuery.trim()) {
-            // Route to the shop page with the search query
             router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`)
         }
     }
 
+    const initials = profile?.full_name
+        ?.split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) ?? "U"
+
+    const isAdmin = profile?.role === "admin"
+
     return (
         <header className="bg-white border-b border-gray-100 sticky top-0 z-40 flex flex-col">
 
-            {/* 1. NEW: The missing orange announcement bar from your design */}
+            {/* Announcement bar */}
             {/* <div className="bg-[#FF5A00] text-white text-xs font-medium py-2 w-full flex items-center justify-center gap-2">
-                <span className="bg-white text-black px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide">Special</span>
+                <span className="bg-white text-black px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide">
+                    Special
+                </span>
                 <span>Get 10% DISCOUNT for first order</span>
-                <Link href="#" className="italic underline underline-offset-2 hover:text-orange-100 transition-colors">
+                <Link
+                    href="/signup"
+                    className="italic underline underline-offset-2 hover:text-orange-100 transition-colors"
+                >
                     Register Now
                 </Link>
             </div> */}
 
             {/* Main navbar */}
             <div className="max-w-7xl w-full mx-auto px-4 flex items-center gap-4 h-16">
+
                 {/* Logo */}
                 <Link href="/">
-                    <Image src="/zeek2.svg" alt="Zeek Logo" width={50} height={20} className="object-cover" />
+                    <Image
+                        src="/zeek2.svg"
+                        alt="Zeek Logo"
+                        width={50}
+                        height={20}
+                        className="object-cover"
+                    />
                 </Link>
 
                 {/* Search */}
@@ -78,27 +141,98 @@ export function Nav() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleSearch}
-                        placeholder="Search Brands, Products & Categories... (Press Enter)"
+                        placeholder="Search Brands, Products & Categories..."
                         className="pl-10 rounded-full bg-gray-50 border-gray-200 focus-visible:ring-[#FF5A00]"
                     />
                 </div>
 
                 {/* Right actions */}
                 <div className="flex items-center gap-3 ml-auto">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="hidden sm:flex items-center gap-1 text-gray-600 hover:text-orange-500 hover:bg-orange-50"
-                        onClick={() => openAuthModal("signin")}
-                    >
-                        <User className="h-4 w-4" />
-                        <span className="text-sm font-medium">Log In / Sign Up</span>
-                    </Button>
 
-                    {/* The Cart Icon Component handles its own state/badge! */}
+                    {/* Auth — logged out */}
+                    {!user && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="hidden sm:flex items-center gap-1.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50"
+                            onClick={() => openAuthModal("signin")}
+                        >
+                            <User className="h-4 w-4" />
+                            <span className="text-sm font-medium">Log In / Sign Up</span>
+                        </Button>
+                    )}
+
+                    {/* Auth — logged in */}
+                    {user && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="hidden sm:flex items-center gap-2 rounded-full hover:opacity-80 transition-opacity focus:outline-none">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarFallback className="bg-orange-100 text-orange-600 text-xs font-semibold">
+                                            {initials}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-sm font-medium text-gray-700 max-w-[100px] truncate">
+                                        {profile?.full_name ?? "Account"}
+                                    </span>
+                                </button>
+                            </DropdownMenuTrigger>
+
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem asChild>
+                                    <Link href="/orders" className="flex items-center gap-2">
+                                        <ShoppingBag className="h-4 w-4 text-gray-400" />
+                                        My Orders
+                                    </Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem asChild>
+                                    <Link href="/wishlist" className="flex items-center gap-2">
+                                        <Heart className="h-4 w-4 text-gray-400" />
+                                        Wishlist
+                                    </Link>
+                                </DropdownMenuItem>
+
+                                {/* Admin link — only shown to admins */}
+                                {isAdmin && (
+                                    <>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem asChild>
+                                            <Link
+                                                href="/admin"
+                                                className="flex items-center gap-2 text-orange-600 font-medium"
+                                            >
+                                                <LayoutDashboard className="h-4 w-4" />
+                                                Admin Panel
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
+
+                                <DropdownMenuSeparator />
+
+                                <DropdownMenuItem asChild>
+                                    <form action={signOut} className="w-full">
+                                        <button
+                                            type="submit"
+                                            className="flex items-center gap-2 w-full text-red-500 hover:text-red-600"
+                                        >
+                                            <LogOut className="h-4 w-4" />
+                                            Sign out
+                                        </button>
+                                    </form>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+
                     <CartNavIcon />
 
-                    <button onClick={handleWishlistClick} className="p-2 hover:opacity-80 transition-opacity">
+                    <button
+                        onClick={handleWishlistClick}
+                        className="p-2 hover:opacity-80 transition-opacity"
+                        aria-label="Wishlist"
+                    >
                         <Heart className="h-5 w-5 text-gray-900" />
                     </button>
 
@@ -121,6 +255,46 @@ export function Nav() {
                                         {label}
                                     </Link>
                                 ))}
+
+                                {/* Mobile auth links */}
+                                {!user ? (
+                                    <button
+                                        className="text-lg font-medium text-orange-500 text-left"
+                                        onClick={() => {
+                                            setMobileOpen(false)
+                                            openAuthModal("signin")
+                                        }}
+                                    >
+                                        Log In / Sign Up
+                                    </button>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/orders"
+                                            className="text-lg font-medium text-gray-700 hover:text-orange-500"
+                                            onClick={() => setMobileOpen(false)}
+                                        >
+                                            My Orders
+                                        </Link>
+                                        {isAdmin && (
+                                            <Link
+                                                href="/admin"
+                                                className="text-lg font-medium text-orange-500"
+                                                onClick={() => setMobileOpen(false)}
+                                            >
+                                                Admin Panel
+                                            </Link>
+                                        )}
+                                        <form action={signOut}>
+                                            <button
+                                                type="submit"
+                                                className="text-lg font-medium text-red-500 text-left"
+                                            >
+                                                Sign out
+                                            </button>
+                                        </form>
+                                    </>
+                                )}
                             </nav>
                         </SheetContent>
                     </Sheet>
@@ -145,7 +319,6 @@ export function Nav() {
                             </Link>
                         ))}
                     </div>
-                    {/* The design specifically formats the number in this color */}
                     <span className="text-sm font-bold text-[#FF5A00]">
                         (+234) 911 049 7316
                     </span>

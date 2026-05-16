@@ -44,7 +44,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (user && protectedCustomerRoutes.some((r) => pathname.startsWith(r))){
+  if (!user && protectedCustomerRoutes.some((r) => pathname.startsWith(r))){
     const redirectUrl = new URL("/", request.url)
     redirectUrl.searchParams.set("auth", "required")
     redirectUrl.searchParams.set("next", pathname)

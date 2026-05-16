@@ -41,5 +41,5 @@ export async function signOut() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect("/");
 }
