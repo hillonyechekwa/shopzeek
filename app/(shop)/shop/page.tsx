@@ -47,7 +47,7 @@ export default async function ShopPage(props: {
     query = query.or(`name.ilike.%${searchParams.search}%,description.ilike.%${searchParams.search}%`);
   }
 
-  if (searchParams.category) query = query.eq("category", searchParams.category);
+  if (searchParams.category) query = query.ilike("category", searchParams.category);
   if (searchParams.brand) {
     const brandArray = searchParams.brand.split(",");
     query = query.in("brand", brandArray);

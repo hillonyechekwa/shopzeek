@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChevronDown, Sparkles, Layers, Flame, Heart } from "lucide-react";
+import {useRouter} from "next/navigation"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +13,21 @@ import {
 // Unified categories data matching your storefront and query schema
 const categories = [
   { name: "All Products", slug: "", icon: Layers },
-  { name: "Skin Care", slug: "skincare", icon: Sparkles },
-  { name: "Hair Care", slug: "haircare", icon: Flame },
-  { name: "Fragrance", slug: "fragrance", icon: Heart },
+  { name: "Skin Care", slug: "Skin Care", icon: Sparkles },
+  { name: "Hair Care", slug: "Hair Care", icon: Flame },
+  { name: "Fragrance", slug: "Fragrance", icon: Heart },
 ];
 
 export function CategoriesDropdown() {
+
+  const router = useRouter()
+
+  const handleNavigation = (slug: string) => {
+    const targetUrl = slug ? `/shop?category=${slug}` : "/shop";
+    router.push(targetUrl);
+  };
+
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors focus:outline-none group">
@@ -35,7 +45,7 @@ export function CategoriesDropdown() {
         {categories.map((category) => {
           const Icon = category.icon;
           return (
-            <DropdownMenuItem key={category.name} asChild className="focus:bg-gray-50 focus:text-gray-900 rounded-lg cursor-pointer">
+            <DropdownMenuItem key={category.name} onSelect={() => handleNavigation(category.slug)} asChild className="focus:bg-gray-50 focus:text-gray-900 rounded-lg cursor-pointer">
               <Link
                 href={category.slug ? `/shop?category=${category.slug}` : "/shop"}
                 className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 font-medium transition-colors hover:text-orange-500"
