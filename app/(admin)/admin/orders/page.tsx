@@ -17,33 +17,25 @@ export default async function AdminOrdersPage() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
-  // Fetch all orders, newest first
-  // We grab the profile name to show who made the order
+  // 1. Fetch using the "*" wildcard to bypass the outdated TypeScript types
   const { data: rawOrders, error } = await supabase
     .from("orders")
-    .select(`
-      id,
-      created_at,
-      total_amount,
-      status,
-      payment_reference,
-      profiles ( full_name, email )
-    `)
+    .select("*")
     .order("created_at", { ascending: false });
-
-    const orders = rawOrders?.map(order => ({
-      ...order,
-      profiles: Array.isArray(order.profiles) ? order.profiles[0] : order.profiles
-    })) || [];
 
   if (error) {
     console.error("Error fetching orders:", error);
   }
 
+  // 2. Safely cast the orders to 'any[]' so TypeScript stops throwing red lines
+  // We completely removed the 'profiles' mapping here since it no longer exists!
+  const orders = rawOrders as any[] || [];
+
   // Helper function to render the correct status badge
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pending":
+      case "pending_payment":
         return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"><Clock className="w-3 h-3 mr-1" /> Pending</Badge>;
       case "paid":
       case "processing":
@@ -96,7 +88,7 @@ export default async function AdminOrdersPage() {
                       )}
                     </div>
                   </TableCell>
-                  
+
                   <TableCell className="text-sm text-gray-500">
                     {new Date(order.created_at).toLocaleDateString('en-GB', {
                       day: 'numeric',
@@ -107,13 +99,14 @@ export default async function AdminOrdersPage() {
                     })}
                   </TableCell>
 
+                  {/* 3. Read directly from 'order' instead of 'order.profiles' */}
                   <TableCell>
                     <div className="flex flex-col">
                       <span className="font-medium text-gray-900">
-                        {order.profiles?.full_name || "Guest User"}
+                        {order.customer_name || "Guest User"}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {order.profiles?.email || "No email"}
+                        {order.customer_email || "No email"}
                       </span>
                     </div>
                   </TableCell>

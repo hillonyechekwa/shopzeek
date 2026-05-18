@@ -2,11 +2,15 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
+// ==========================================
+// 1. STOREFRONT: Create Order & Init Payment
+// ==========================================
 export async function createOrderAndInitPayment(
   formData: FormData,
   cartItems: any[],
-  totalAmount: number
+  totalAmount: number,
 ) {
   try {
     const cookieStore = await cookies();
@@ -69,7 +73,7 @@ export async function createOrderAndInitPayment(
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     const gpData = await response.json();
@@ -103,4 +107,28 @@ export async function createOrderAndInitPayment(
       error: error.message || "Something went wrong",
     };
   }
+}
+
+// ==========================================
+// 2. ADMIN: Update Order Status
+// ==========================================
+export async function updateOrderStatus(orderId: string, formData: FormData) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const newStatus = formData.get("status") as string;
+
+  const { error } = await supabase
+    .from("orders")
+    .update({ status: newStatus })
+    .eq("id", orderId);
+
+  if (error) {
+    console.error("Failed to update order status:", error);
+    throw new Error("Could not update status.");
+  }
+
+  // Instantly refresh the page data so the new status badge appears in the Admin UI
+  revalidatePath(`/admin/orders/${orderId}`);
+  revalidatePath("/admin/orders");
 }
